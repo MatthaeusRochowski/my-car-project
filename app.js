@@ -9,6 +9,9 @@ const mongoose     = require('mongoose');
 const logger       = require('morgan');
 const path         = require('path');
 
+const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
+
 
 mongoose
   .connect('mongodb://localhost/my-car-project', {useNewUrlParser: true})
@@ -39,6 +42,20 @@ app.use(require('node-sass-middleware')({
 }));
       
 
+// Express-Session
+app.use(
+  session({
+    secret: "basic-auth-secret",
+    cookie: { maxAge: 24 * 60 * 60 },
+    resave: false,
+    saveUninitialized: false,
+    store: new MongoStore({
+      mongooseConnection: mongoose.connection
+    })
+  })
+);
+
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
@@ -51,8 +68,16 @@ app.locals.title = 'Manage my Fleet';
 
 const index = require('./routes/index');
 app.use('/', index);
+
+// auth routes
 const signup = require('./routes/auth/signup');
 app.use('/signup', signup);
+const login = require('./routes/auth/login');
+app.use('/login', login);
+const logout = require('./routes/auth/logout');
+app.use('/logout', logout);
+
+// content routes
 
 
 module.exports = app;

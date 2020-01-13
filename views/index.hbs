@@ -1,4 +1,14 @@
-<h1>HOME</h1>
-<p>Willkommen!</p>
+<nav id="nav-container">
+  <a href="/signup">Signup</a>
+  <a href="/login">Login</a>
+  <a href="/private">Private</a>
+</nav>
 
-<p id="success-message"> {{ successMessage }} </p>
+<h1>HOME</h1>
+<p>Welcome!</p>
+
+<div>
+  {{#if message}}
+  <h2 class="success-message">{{message}}</h2>
+  {{/if}}
+</div>
